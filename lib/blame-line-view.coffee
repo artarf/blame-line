@@ -10,25 +10,18 @@ class BlameLineView
 
   render: (msg)->
     if msg.error
-      @element.innerHTML = "<div>#{msg.stderr}<br/>#{msg.error.message}</div>"
+      @element.innerHTML = "#{msg.stderr}<br/>#{msg.error.message}"
     else if msg.author is 'Not Committed Yet'
-      @element.innerHTML = "<div>Not committed yet.</div>"
+      @element.innerHTML = "[Not committed yet]"
     else
-      pl = ''
       @element.innerHTML = """
+      <div class="summary">#{msg.summary}</div>
       <div>
-        <div class="summary">#{msg.summary}</div>
-        <div>
-          <span class="author">#{msg.author}</span> |
-          #{parseDatetime(msg.authorTime).fromNow()} |
-          <a target="_blank" class="blame-line-link"
-              #{if msg.link? then '' else 'disabled'}
-              href="#{msg.link ? ''}">#{msg.hash.slice 0, 8}</a>
-        </div>
+        <span class="author">#{msg.author}</span> |
+        #{parseDatetime(msg.authorTime).fromNow()} |
+        <a target="_blank" class="blame-line-link"
+            #{if msg.link? then '' else 'disabled'}
+            href="#{msg.link ? ''}">#{msg.hash.slice 0, 8}</a>
       </div>
       """
     @element
-
-  destroy: -> @element.remove()
-
-  getElement: -> @element
