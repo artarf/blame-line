@@ -19,5 +19,8 @@ module.exports = (editor, line, item, enter)->
   _peekDisposable.add editor.onDidChangeCursorPosition ({newBufferPosition})=>
     return if newBufferPosition.row is line
     dispose _peekDisposable
+    # focus moves to Atom <body> when link is clicked and then returning to Atom
+    # => editor becomes unresponsive
+    # This fixes it:
     editor.getElement().focus()
   _peekDisposable.add dispose: -> _peekDisposable = null
