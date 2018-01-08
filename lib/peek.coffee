@@ -22,3 +22,4 @@ module.exports = (editor, line, markerOpts, keyHandler)->
     # This fixes it:
     editor.getElement().focus()
   _peekDisposable.add dispose: -> _peekDisposable = null
+  editor.scrollToCursorPosition()
