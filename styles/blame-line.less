@@ -2,11 +2,15 @@
 @import "syntax-variables";
 
 .blame-line {
+  border: 1px dashed @text-color-subtle;
+  padding: 10px 15px;
   color: @text-color;
+  background-color: @base-background-color;
   .summary { color: @text-color-highlight; }
   a {
     text-decoration: underline;
     &[disabled] {
+      text-decoration: none;
       color: @text-color-ignored;
       pointer-events: none;
     }
