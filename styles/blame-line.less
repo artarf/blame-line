@@ -1,8 +1,14 @@
-// The ui-variables file is provided by base themes provided by Atom.
-//
-// See https://github.com/atom/atom-dark-ui/blob/master/styles/ui-variables.less
-// for a full listing of what's available.
 @import "ui-variables";
+@import "syntax-variables";
 
 .blame-line {
+  color: @text-color;
+  .summary { color: @text-color-highlight; }
+  a {
+    text-decoration: underline;
+    &[disabled] {
+      color: @text-color-ignored;
+      pointer-events: none;
+    }
+  }
 }

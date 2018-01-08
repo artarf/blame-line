@@ -3,16 +3,13 @@
   "main": "./lib/blame-line",
   "version": "0.0.0",
   "description": "A short description of your package",
-  "keywords": [
-  ],
-  "activationCommands": {
-    "atom-workspace": "blame-line:toggle"
-  },
+  "keywords": [],
   "repository": "https://github.com/atom/blame-line",
   "license": "MIT",
   "engines": {
     "atom": ">=1.0.0 <2.0.0"
   },
   "dependencies": {
+    "moment": "^2.20.1"
   }
 }

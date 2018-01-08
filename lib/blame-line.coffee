@@ -1,33 +1,47 @@
 BlameLineView = require './blame-line-view'
+path = require 'path'
+{ exec } = require 'child_process'
 {CompositeDisposable} = require 'atom'
+{shell} = require('electron')
+peek = require './peek'
+repoUrl = require('./repo-url')
+
+camelize = (string) ->
+  return '' unless string
+  string.replace /[_-]+(\w)/g, (m) -> m[1].toUpperCase()
+
+parse = (out)->
+  [hash, lines..., theLine, _] = out.split('\n')
+  map = {hash:hash.split(' ')[0]}
+  for l in lines
+    [a, b...] = l.split ' '
+    map[camelize a] = if ['summary','author'].includes(a) then b.join ' ' else b[0]
+  map
 
 module.exports = BlameLine =
-  blameLineView: null
-  modalPanel: null
+  view: null
   subscriptions: null
 
-  activate: (state) ->
-    @blameLineView = new BlameLineView(state.blameLineViewState)
-    @modalPanel = atom.workspace.addModalPanel(item: @blameLineView.getElement(), visible: false)
-
-    # Events subscribed to in atom's system can be easily cleaned up with a CompositeDisposable
+  activate: ->
+    @view = new BlameLineView()
     @subscriptions = new CompositeDisposable
-
-    # Register command that toggles this view
-    @subscriptions.add atom.commands.add 'atom-workspace', 'blame-line:toggle': => @toggle()
+    @subscriptions.add atom.commands.add 'atom-workspace', 'blame-line:blame': => @blame()
 
   deactivate: ->
-    @modalPanel.destroy()
     @subscriptions.dispose()
-    @blameLineView.destroy()
 
-  serialize: ->
-    blameLineViewState: @blameLineView.serialize()
-
-  toggle: ->
-    console.log 'BlameLine was toggled!'
-
-    if @modalPanel.isVisible()
-      @modalPanel.hide()
-    else
-      @modalPanel.show()
+  blame: ->
+    return unless e = atom.workspace.getActiveTextEditor()
+    line = e.getLastCursor().getBufferRow()
+    filePath = e.getBuffer().getPath()
+    cmdText = "git blame #{filePath} --line-porcelain -L #{line + 1},+1"
+    exec cmdText, {cwd: path.dirname(filePath)}, (error, stdout, stderr)=>
+      repoUrl(e.getPath()).then (url)=>
+        xx = if error then {error, stderr} else parse stdout
+        xx.link = "#{url}/commit/#{xx.hash}" if url
+        peek e, line, @view.render(xx), (e)->
+          return if error
+          return unless xx.link
+          e.stopPropagation()
+          shell.openExternal(xx.link)
+          true
