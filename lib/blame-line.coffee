@@ -3,7 +3,7 @@ path = require 'path'
 { exec } = require 'child_process'
 {CompositeDisposable} = require 'atom'
 {shell} = require('electron')
-peek = require './peek'
+peekMarker = require './peek'
 repoUrl = require('./repo-url')
 
 camelize = (string) ->
@@ -39,7 +39,8 @@ module.exports = BlameLine =
       repoUrl(e.getPath()).then (url)=>
         xx = if error then {error, stderr} else parse stdout
         xx.link = "#{url}/commit/#{xx.hash}" if url
-        peek e, line, @view.render(xx), (e)->
+        markerOpts = {type:'block', position:'before', item: @view.render xx}
+        peekMarker e, line, markerOpts, (e)->
           return if error
           return unless xx.link
           e.stopPropagation()
