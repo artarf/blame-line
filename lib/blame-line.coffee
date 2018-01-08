@@ -40,7 +40,8 @@ module.exports = BlameLine =
         xx = if error then {error, stderr} else parse stdout
         xx.link = "#{url}/commit/#{xx.hash}" if url
         markerOpts = {type:'block', position:'before', item: @view.render xx}
-        peekMarker e, line, markerOpts, (e)->
+        aye = -> true
+        peekMarker e, line, markerOpts, "ctrl-c": aye, Escape: aye, Enter: (e)->
           return if error
           e.stopPropagation()
           if xx.link
