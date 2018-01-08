@@ -42,7 +42,10 @@ module.exports = BlameLine =
         markerOpts = {type:'block', position:'before', item: @view.render xx}
         peekMarker e, line, markerOpts, (e)->
           return if error
-          return unless xx.link
           e.stopPropagation()
-          shell.openExternal(xx.link)
+          if xx.link
+            shell.openExternal(xx.link)
+          else if xx.author isnt 'Not Committed Yet'
+            n = atom.notifications.addInfo 'No external repository', dismissable: true
+            setTimeout n.dismiss.bind(n), 4000
           true
