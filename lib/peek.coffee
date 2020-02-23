@@ -14,7 +14,7 @@ module.exports = (editor, line, markerOpts, keyHandler)->
     key = (if e.ctrlKey then 'ctrl-' else '') + e.key
     dispose _peekDisposable if keyHandler[key]? e
   _peekDisposable.add dispose: -> editor.element.removeEventListener 'keydown', listener
-  _peekDisposable.add editor.onDidChangeCursorPosition ({newBufferPosition})=>
+  _peekDisposable.add editor.onDidChangeCursorPosition ({newBufferPosition})->
     return if newBufferPosition.row is line
     dispose _peekDisposable
     # focus moves to Atom <body> when link is clicked and then returning to Atom
