@@ -11,8 +11,9 @@ module.exports = (editor, line, markerOpts, keyHandler)->
   _peekDisposable.add dispose: -> marker.destroy()
   editor.decorateMarker marker, markerOpts
   editor.element.addEventListener 'keydown', listener = (e)->
-    key = (if e.ctrlKey then 'ctrl-' else '') + e.key
-    dispose _peekDisposable if keyHandler[key]? e
+    key = atom.keymaps.keystrokeForKeyboardEvent(e)
+    if keyHandler[key]?(e)
+      dispose _peekDisposable
   _peekDisposable.add dispose: -> editor.element.removeEventListener 'keydown', listener
   _peekDisposable.add editor.onDidChangeCursorPosition ({newBufferPosition})->
     return if newBufferPosition.row is line
