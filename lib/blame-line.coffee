@@ -38,7 +38,10 @@ module.exports = BlameLine =
     exec cmdText, {cwd: path.dirname(filePath)}, (error, stdout, stderr)=>
       repoUrl(e.getPath()).then (url)=>
         xx = if error then {error, stderr} else parse stdout
-        xx.link = "#{url}/commit/#{xx.hash}" if url
+        if url.includes 'bitbucket'
+          xx.link = "#{url}/commits/#{xx.hash}" if url
+        else
+          xx.link = "#{url}/commit/#{xx.hash}" if url
         markerOpts = {type:'block', position:'before', item: @view.render xx}
         aye = -> true
         peekMarker e, line, markerOpts, "ctrl-c": aye, Escape: aye, Enter: (e)->
