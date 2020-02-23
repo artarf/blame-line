@@ -38,7 +38,7 @@ module.exports = BlameLine =
     exec cmdText, {cwd: path.dirname(filePath)}, (error, stdout, stderr)=>
       repoUrl(e.getPath()).then (url)=>
         xx = if error then {error, stderr} else parse stdout
-        if url.includes 'bitbucket'
+        if url?.includes 'bitbucket'
           xx.link = "#{url}/commits/#{xx.hash}" if url
         else
           xx.link = "#{url}/commit/#{xx.hash}" if url
