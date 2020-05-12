@@ -44,7 +44,7 @@ module.exports = BlameLine =
           xx.link = "#{url}/commit/#{xx.hash}" if url
         markerOpts = {type:'block', position:'before', item: @view.render xx}
         aye = -> true
-        peekMarker e, line, markerOpts, "ctrl-c": aye, Escape: aye, Enter: (e)->
+        peekMarker e, line, markerOpts, "ctrl-c": aye, escape: aye, enter: (e)->
           return if error
           e.stopPropagation()
           if xx.link
