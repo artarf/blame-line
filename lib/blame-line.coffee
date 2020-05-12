@@ -4,7 +4,6 @@ X = require 'execa'
 {CompositeDisposable} = require 'atom'
 {shell} = require('electron')
 peekMarker = require './peek'
-repoUrl = require('./repo-url')
 
 camelize = (string) ->
   return '' unless string
