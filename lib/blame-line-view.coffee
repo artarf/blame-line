@@ -24,6 +24,7 @@ class BlameLineView
         <a target="_blank" class="blame-line-link"
             #{if msg.link? then '' else 'disabled'}
             href="#{msg.link ? ''}">#{msg.hash}</a>
+        #{if msg.link? then '  [enter opens]' else ''}
       </div>
       """
     @element
