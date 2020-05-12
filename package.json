@@ -2,9 +2,9 @@
   "name": "blame-line",
   "main": "./lib/blame-line",
   "version": "0.0.0",
-  "description": "A short description of your package",
+  "description": "Show last git commit for a line",
   "keywords": [],
-  "repository": "https://github.com/atom/blame-line",
+  "repository": "https://github.com/artarf/blame-line",
   "license": "MIT",
   "engines": {
     "atom": ">=1.0.0 <2.0.0"
