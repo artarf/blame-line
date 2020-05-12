@@ -1,7 +1,7 @@
 {
   "name": "blame-line",
   "main": "./lib/blame-line",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Show last git commit for a line",
   "keywords": [],
   "repository": "https://github.com/artarf/blame-line",
