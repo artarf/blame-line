@@ -6,7 +6,11 @@
   padding: 10px 15px;
   color: @text-color;
   background-color: @base-background-color;
-  .summary { color: @text-color-highlight; }
+  .summary {
+    color: @text-color-highlight;
+    border-bottom: 1px dashed;
+    padding-bottom: 5px;
+  }
   a {
     text-decoration: underline;
     &[disabled] {
