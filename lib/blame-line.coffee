@@ -1,6 +1,6 @@
 BlameLineView = require './blame-line-view'
 path = require 'path'
-{ exec } = require 'child_process'
+X = require 'execa'
 {CompositeDisposable} = require 'atom'
 {shell} = require('electron')
 peekMarker = require './peek'
@@ -34,18 +34,35 @@ module.exports = BlameLine =
     return unless e = atom.workspace.getActiveTextEditor()
     line = e.getLastCursor().getBufferRow()
     filePath = e.getBuffer().getPath()
-    cmdText = "git blame #{filePath} --line-porcelain -L #{line + 1},+1"
-    exec cmdText, {cwd: path.dirname(filePath)}, (error, stdout, stderr)=>
-      repoUrl(e.getPath()).then (url)=>
-        xx = if error then {error, stderr} else parse stdout
+    f = path.basename filePath
+    cwd = path.dirname filePath
+    try
+      promises = [
+        X 'git', ['blame', f, '--line-porcelain', '-L', "#{line + 1},+1"], {cwd}
+        X 'git', ['remote', '-v'], {cwd}
+      ]
+      [result, remote] = await Promise.all(promises)
+      if xx = parse result.stdout
+        if remote?.stdout?.trim()
+          url = remote.stdout.split(/\s+/)[1]
+          if url.indexOf('https://') is -1
+            url = 'https://' + url.replace('git@', '').replace(':', '/')
+          url = url.replace('.git', '')
+          # check the origin's host. if bitbucket, we have some formatting to do
+          if (url.indexOf('@bitbucket') isnt -1)
+            # we want everything after the @
+            url = "https://" + url.split('@')[1]
         if url?.includes 'bitbucket'
           xx.link = "#{url}/commits/#{xx.hash}" if url
         else
           xx.link = "#{url}/commit/#{xx.hash}" if url
+        show = await X 'git', ['show', xx.hash, '--format=%h%x00%b%x00'], {cwd}
+        [hash, body] = show.stdout.split('\0').slice(0,2)
+        xx.hash = hash
+        xx.body = body
         markerOpts = {type:'block', position:'before', item: @view.render xx}
         aye = -> true
         peekMarker e, line, markerOpts, "ctrl-c": aye, escape: aye, enter: (e)->
-          return if error
           e.stopPropagation()
           if xx.link
             shell.openExternal(xx.link)
@@ -53,3 +70,8 @@ module.exports = BlameLine =
             n = atom.notifications.addInfo 'No external repository', dismissable: true
             setTimeout n.dismiss.bind(n), 4000
           true
+    catch e
+      if e.command?
+        atom.notifications.addError e.command, details: e.message + '\n' + e.stderr
+      else
+        console.error e.stack
