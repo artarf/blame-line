@@ -12,7 +12,7 @@
   "dependencies": {
     "atom-coffee2-transpiler": "0.0.2",
     "execa": "^4.0.0",
-    "moment": "^2.20.1"
+    "moment": "^2.29.4"
   },
   "atomTranspilers": [
     {
